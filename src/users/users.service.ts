@@ -7,6 +7,6 @@ export class UsersService {
   private readonly users: Users[] = [];
 
   findAll(): Users[] {
-    return [];
+    return this.users;
   }
 }
