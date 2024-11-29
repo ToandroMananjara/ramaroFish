@@ -7,64 +7,65 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model categories {
-  id                 Int            @id @default(autoincrement())
-  name               String         @unique @db.VarChar
+model Categories {
+  id                 Int            @id(map: "categories_pkey") @default(autoincrement())
+  name               String         @unique(map: "categories_name_key") @db.VarChar
   description        String?
   parent_category_id Int?
-  categories         categories?    @relation("categoriesTocategories", fields: [parent_category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  other_categories   categories[]   @relation("categoriesTocategories")
-  publications       publications[]
+  Categories         Categories?    @relation("CategoriesToCategories", fields: [parent_category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "categories_parent_category_id_fkey")
+  other_Categories   Categories[]   @relation("CategoriesToCategories")
+  Publications       Publications[]
 }
 
-model companies {
-  id              Int               @id @default(autoincrement())
-  company_name    String            @unique @db.VarChar
-  NIF             String            @unique @db.VarChar
-  STAT            String            @unique @db.VarChar
+model Companies {
+  id              Int               @id(map: "companies_pkey") @default(autoincrement())
+  company_name    String            @unique(map: "companies_company_name_key") @db.VarChar
+  NIF             String            @unique(map: "companies_NIF_key") @db.VarChar
+  STAT            String            @unique(map: "companies_STAT_key") @db.VarChar
   localisation    String?           @db.VarChar
   created_at      DateTime?         @db.Timestamp(6)
   is_deleted      Boolean?          @default(false)
-  company_members company_members[] @ignore
-  publications    publications[]
+  Company_members Company_members[] @ignore
+  Publications    Publications[]
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model company_members {
-  user_id    Int
+model Company_members {
+  user_id    Int 
   company_id Int
   role       String?   @default("member") @db.VarChar
   joined_at  DateTime? @db.Timestamp(6)
   is_deleted Boolean?  @default(false)
-  companies  companies @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users      users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Companies  Companies @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "company_members_company_id_fkey")
+  Users      Users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "company_members_user_id_fkey")
 
-  @@ignore
+    @@id([user_id, company_id]) // Définir la clé primaire composite
+
 }
 
-model conversations {
-  id                                  Int        @id @default(autoincrement())
+model Conversations {
+  id                                  Int        @id(map: "conversations_pkey") @default(autoincrement())
   user1_id                            Int
   user2_id                            Int
   last_message_at                     DateTime?  @db.Timestamp(6)
   is_deleted                          Boolean?   @default(false)
-  users_conversations_user1_idTousers users      @relation("conversations_user1_idTousers", fields: [user1_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users_conversations_user2_idTousers users      @relation("conversations_user2_idTousers", fields: [user2_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  messages                            messages[]
+  Users_Conversations_user1_idToUsers Users      @relation("Conversations_user1_idToUsers", fields: [user1_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "conversations_user1_id_fkey")
+  Users_Conversations_user2_idToUsers Users      @relation("Conversations_user2_idToUsers", fields: [user2_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "conversations_user2_id_fkey")
+  Messages                            Messages[]
 }
 
-model followers {
-  id                                  Int       @id @default(autoincrement())
+model Followers {
+  id                                  Int       @id(map: "followers_pkey") @default(autoincrement())
   follower_id                         Int
   following_id                        Int
   created_at                          DateTime? @db.Timestamp(6)
   is_deleted                          Boolean?  @default(false)
-  users_followers_follower_idTousers  users     @relation("followers_follower_idTousers", fields: [follower_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users_followers_following_idTousers users     @relation("followers_following_idTousers", fields: [following_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Users_Followers_follower_idToUsers  Users     @relation("Followers_follower_idToUsers", fields: [follower_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "followers_follower_id_fkey")
+  Users_Followers_following_idToUsers Users     @relation("Followers_following_idToUsers", fields: [following_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "followers_following_id_fkey")
 }
 
-model messages {
-  id                                Int           @id @default(autoincrement())
+model Messages {
+  id                                Int           @id(map: "messages_pkey") @default(autoincrement())
   sender_id                         Int
   receiver_id                       Int
   content                           String
@@ -72,13 +73,13 @@ model messages {
   created_at                        DateTime?     @db.Timestamp(6)
   is_deleted                        Boolean?      @default(false)
   conversation_id                   Int
-  conversations                     conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_conversation")
-  users_messages_receiver_idTousers users         @relation("messages_receiver_idTousers", fields: [receiver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users_messages_sender_idTousers   users         @relation("messages_sender_idTousers", fields: [sender_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Conversations                     Conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_conversation")
+  Users_Messages_receiver_idToUsers Users         @relation("Messages_receiver_idToUsers", fields: [receiver_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "messages_receiver_id_fkey")
+  Users_Messages_sender_idToUsers   Users         @relation("Messages_sender_idToUsers", fields: [sender_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "messages_sender_id_fkey")
 }
 
-model notifications {
-  id           Int       @id @default(autoincrement())
+model Notifications {
+  id           Int       @id(map: "notifications_pkey") @default(autoincrement())
   user_id      Int
   type         String    @db.VarChar
   reference_id Int?
@@ -86,22 +87,22 @@ model notifications {
   created_at   DateTime? @db.Timestamp(6)
   is_deleted   Boolean?  @default(false)
   sub_type     String?   @db.VarChar
-  users        users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Users        Users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "notifications_user_id_fkey")
 }
 
-model publication_comments {
-  id             Int          @id @default(autoincrement())
+model Publication_comments {
+  id             Int          @id(map: "publication_comments_pkey") @default(autoincrement())
   publication_id Int
   user_id        Int
   comment_text   String
   created_at     DateTime?    @db.Timestamp(6)
   is_deleted     Boolean?     @default(false)
-  publications   publications @relation(fields: [publication_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users          users        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Publications   Publications @relation(fields: [publication_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "publication_comments_publication_id_fkey")
+  Users          Users        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "publication_comments_user_id_fkey")
 }
 
-model publications {
-  id                   Int                    @id @default(autoincrement())
+model Publications {
+  id                   Int                    @id(map: "publications_pkey") @default(autoincrement())
   owner_user_id        Int?
   owner_company_id     Int?
   publication_type     String                 @db.VarChar
@@ -121,27 +122,27 @@ model publications {
   created_at           DateTime?              @db.Timestamp(6)
   updated_at           DateTime?              @db.Timestamp(6)
   is_deleted           Boolean?               @default(false)
-  publication_comments publication_comments[]
-  categories           categories?            @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  companies            companies?             @relation(fields: [owner_company_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users                users?                 @relation(fields: [owner_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  reactions            reactions[]
-  transactions         transactions[]
+  Publication_comments Publication_comments[]
+  Categories           Categories?            @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "publications_category_id_fkey")
+  Companies            Companies?             @relation(fields: [owner_company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "publications_owner_company_id_fkey")
+  Users                Users?                 @relation(fields: [owner_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "publications_owner_user_id_fkey")
+  Reactions            Reactions[]
+  Transactions         Transactions[]
 }
 
-model reactions {
-  id             Int          @id @default(autoincrement())
+model Reactions {
+  id             Int          @id(map: "reactions_pkey") @default(autoincrement())
   publication_id Int
   user_id        Int
   reaction_type  String       @default("like") @db.VarChar
   created_at     DateTime?    @db.Timestamp(6)
   is_deleted     Boolean?     @default(false)
-  publications   publications @relation(fields: [publication_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users          users        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Publications   Publications @relation(fields: [publication_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reactions_publication_id_fkey")
+  Users          Users        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reactions_user_id_fkey")
 }
 
-model reviews {
-  id                               Int          @id @default(autoincrement())
+model Reviews {
+  id                               Int          @id(map: "reviews_pkey") @default(autoincrement())
   transaction_id                   Int
   reviewer_id                      Int
   reviewee_id                      Int
@@ -149,13 +150,13 @@ model reviews {
   comment                          String?
   created_at                       DateTime?    @db.Timestamp(6)
   is_deleted                       Boolean?     @default(false)
-  users_reviews_reviewee_idTousers users        @relation("reviews_reviewee_idTousers", fields: [reviewee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users_reviews_reviewer_idTousers users        @relation("reviews_reviewer_idTousers", fields: [reviewer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  transactions                     transactions @relation(fields: [transaction_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Users_Reviews_reviewee_idToUsers Users        @relation("Reviews_reviewee_idToUsers", fields: [reviewee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_reviewee_id_fkey")
+  Users_Reviews_reviewer_idToUsers Users        @relation("Reviews_reviewer_idToUsers", fields: [reviewer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_reviewer_id_fkey")
+  Transactions                     Transactions @relation(fields: [transaction_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_transaction_id_fkey")
 }
 
-model transactions {
-  id                                  Int          @id @default(autoincrement())
+model Transactions {
+  id                                  Int          @id(map: "transactions_pkey") @default(autoincrement())
   buyer_id                            Int
   seller_id                           Int
   publication_id                      Int
@@ -164,16 +165,16 @@ model transactions {
   transaction_date                    DateTime     @db.Timestamp(6)
   status                              String?      @default("pending") @db.VarChar
   is_deleted                          Boolean?     @default(false)
-  reviews                             reviews[]
-  users_transactions_buyer_idTousers  users        @relation("transactions_buyer_idTousers", fields: [buyer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  publications                        publications @relation(fields: [publication_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users_transactions_seller_idTousers users        @relation("transactions_seller_idTousers", fields: [seller_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Reviews                             Reviews[]
+  Users_Transactions_buyer_idToUsers  Users        @relation("Transactions_buyer_idToUsers", fields: [buyer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_buyer_id_fkey")
+  Publications                        Publications @relation(fields: [publication_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_publication_id_fkey")
+  Users_Transactions_seller_idToUsers Users        @relation("Transactions_seller_idToUsers", fields: [seller_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_seller_id_fkey")
 }
 
-model users {
-  id                                          Int                    @id @default(autoincrement())
-  username                                    String                 @unique @db.VarChar
-  email                                       String                 @unique @db.VarChar
+model Users {
+  id                                          Int                    @id(map: "users_pkey") @default(autoincrement())
+  username                                    String                 @unique(map: "users_username_key") @db.VarChar
+  email                                       String                 @unique(map: "users_email_key") @db.VarChar
   password                                    String                 @db.VarChar
   created_at                                  DateTime?              @db.Timestamp(6)
   country                                     String?                @db.VarChar
@@ -183,19 +184,19 @@ model users {
   profile_picture                             String?                @db.VarChar
   is_deleted                                  Boolean?               @default(false)
   is_premium_user                             Boolean?               @default(false)
-  company_members                             company_members[]      @ignore
-  conversations_conversations_user1_idTousers conversations[]        @relation("conversations_user1_idTousers")
-  conversations_conversations_user2_idTousers conversations[]        @relation("conversations_user2_idTousers")
-  followers_followers_follower_idTousers      followers[]            @relation("followers_follower_idTousers")
-  followers_followers_following_idTousers     followers[]            @relation("followers_following_idTousers")
-  messages_messages_receiver_idTousers        messages[]             @relation("messages_receiver_idTousers")
-  messages_messages_sender_idTousers          messages[]             @relation("messages_sender_idTousers")
-  notifications                               notifications[]
-  publication_comments                        publication_comments[]
-  publications                                publications[]
-  reactions                                   reactions[]
-  reviews_reviews_reviewee_idTousers          reviews[]              @relation("reviews_reviewee_idTousers")
-  reviews_reviews_reviewer_idTousers          reviews[]              @relation("reviews_reviewer_idTousers")
-  transactions_transactions_buyer_idTousers   transactions[]         @relation("transactions_buyer_idTousers")
-  transactions_transactions_seller_idTousers  transactions[]         @relation("transactions_seller_idTousers")
+  Company_members                             Company_members[]      @ignore
+  Conversations_Conversations_user1_idToUsers Conversations[]        @relation("Conversations_user1_idToUsers")
+  Conversations_Conversations_user2_idToUsers Conversations[]        @relation("Conversations_user2_idToUsers")
+  Followers_Followers_follower_idToUsers      Followers[]            @relation("Followers_follower_idToUsers")
+  Followers_Followers_following_idToUsers     Followers[]            @relation("Followers_following_idToUsers")
+  Messages_Messages_receiver_idToUsers        Messages[]             @relation("Messages_receiver_idToUsers")
+  Messages_Messages_sender_idToUsers          Messages[]             @relation("Messages_sender_idToUsers")
+  Notifications                               Notifications[]
+  Publication_comments                        Publication_comments[]
+  Publications                                Publications[]
+  Reactions                                   Reactions[]
+  Reviews_Reviews_reviewee_idToUsers          Reviews[]              @relation("Reviews_reviewee_idToUsers")
+  Reviews_Reviews_reviewer_idToUsers          Reviews[]              @relation("Reviews_reviewer_idToUsers")
+  Transactions_Transactions_buyer_idToUsers   Transactions[]         @relation("Transactions_buyer_idToUsers")
+  Transactions_Transactions_seller_idToUsers  Transactions[]         @relation("Transactions_seller_idToUsers")
 }
