@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import Decimal from 'decimal.js';
 import { PrismaService } from 'src/prisma/prisma.service';
+
 
 @Injectable()
 export class CartService {
@@ -27,7 +29,7 @@ export class CartService {
         seller_id: data.seller_id,
         publication_id: data.publication_id,
         quantity: data.quantity || 1, // Default to 1 if not provided
-        total_price: data.total_price,
+        total_price: new Decimal(data.total_price),
         transaction_date: data.transaction_date,
         status: data.status || 'pending', // Default to 'pending' if not provided
         is_deleted: data.is_deleted || false, // Default to false if not provided

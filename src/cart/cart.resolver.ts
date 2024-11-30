@@ -1,6 +1,7 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { CartService } from './cart.service'; // Ensure the correct path to your service
 import { Cart } from './cart.model'; // Assuming you have a Cart model to return
+import Decimal from 'decimal.js';
 
 @Resolver(() => Cart) // Define Cart as the object type this resolver will handle
 export class CartResolver {

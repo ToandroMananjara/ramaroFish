@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Body, Delete, Param } from '@nestjs/common';
 import { CartService } from './cart.service'; // Ensure the correct path to your service
 import { Cart } from './cart.model'; // Assuming you have a Cart model to return
+import Decimal from 'decimal.js';
+
 
 @Controller('cart') // This will set the base route for Cart requests
 export class CartController {
