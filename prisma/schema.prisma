@@ -217,3 +217,30 @@ model Cart {
   Publications                Publications @relation(fields: [publication_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   Users_Cart_seller_idToUsers Users        @relation("Cart_seller_idToUsers", fields: [seller_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
+
+model Payment {
+  id            String      @id @default(uuid())
+  amount        Float
+  currency      String      @default("MGA")
+  status        PaymentStatus
+  provider      PaymentProvider
+  reference     String      @unique
+  phoneNumber   String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum PaymentProvider {
+  AIRTEL_MONEY
+  MVOLA
+  ORANGE_MONEY
+}
