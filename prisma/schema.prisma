@@ -25,13 +25,13 @@ model Companies {
   localisation    String?           @db.VarChar
   created_at      DateTime?         @db.Timestamp(6)
   is_deleted      Boolean?          @default(false)
-  Company_members Company_members[] @ignore
+  Company_members Company_members[]
   Publications    Publications[]
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model Company_members {
-  user_id    Int 
+  user_id    Int
   company_id Int
   role       String?   @default("member") @db.VarChar
   joined_at  DateTime? @db.Timestamp(6)
@@ -39,8 +39,7 @@ model Company_members {
   Companies  Companies @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "company_members_company_id_fkey")
   Users      Users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "company_members_user_id_fkey")
 
-    @@id([user_id, company_id]) // Définir la clé primaire composite
-
+  @@id([user_id, company_id])
 }
 
 model Conversations {
@@ -122,6 +121,7 @@ model Publications {
   created_at           DateTime?              @db.Timestamp(6)
   updated_at           DateTime?              @db.Timestamp(6)
   is_deleted           Boolean?               @default(false)
+  Cart                 Cart[]
   Publication_comments Publication_comments[]
   Categories           Categories?            @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "publications_category_id_fkey")
   Companies            Companies?             @relation(fields: [owner_company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "publications_owner_company_id_fkey")
@@ -184,7 +184,9 @@ model Users {
   profile_picture                             String?                @db.VarChar
   is_deleted                                  Boolean?               @default(false)
   is_premium_user                             Boolean?               @default(false)
-  Company_members                             Company_members[]      @ignore
+  Cart_Cart_buyer_idToUsers                   Cart[]                 @relation("Cart_buyer_idToUsers")
+  Cart_Cart_seller_idToUsers                  Cart[]                 @relation("Cart_seller_idToUsers")
+  Company_members                             Company_members[]
   Conversations_Conversations_user1_idToUsers Conversations[]        @relation("Conversations_user1_idToUsers")
   Conversations_Conversations_user2_idToUsers Conversations[]        @relation("Conversations_user2_idToUsers")
   Followers_Followers_follower_idToUsers      Followers[]            @relation("Followers_follower_idToUsers")
@@ -199,4 +201,19 @@ model Users {
   Reviews_Reviews_reviewer_idToUsers          Reviews[]              @relation("Reviews_reviewer_idToUsers")
   Transactions_Transactions_buyer_idToUsers   Transactions[]         @relation("Transactions_buyer_idToUsers")
   Transactions_Transactions_seller_idToUsers  Transactions[]         @relation("Transactions_seller_idToUsers")
+}
+
+model Cart {
+  id                          Int          @id @default(autoincrement())
+  buyer_id                    Int
+  seller_id                   Int
+  publication_id              Int
+  quantity                    Int?         @default(1)
+  total_price                 Decimal      @db.Decimal(10, 2)
+  transaction_date            DateTime     @db.Timestamp(6)
+  status                      String?      @default("pending") @db.VarChar
+  is_deleted                  Boolean?     @default(false)
+  Users_Cart_buyer_idToUsers  Users        @relation("Cart_buyer_idToUsers", fields: [buyer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Publications                Publications @relation(fields: [publication_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Users_Cart_seller_idToUsers Users        @relation("Cart_seller_idToUsers", fields: [seller_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
