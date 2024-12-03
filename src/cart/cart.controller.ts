@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Delete, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, Param, Patch } from '@nestjs/common';
 import { CartService } from './cart.service'; // Ensure the correct path to your service
 import { Cart } from './cart.model'; // Assuming you have a Cart model to return
 import Decimal from 'decimal.js';
@@ -38,6 +38,24 @@ export class CartController {
     };
     return this.cartService.createCart(cartData); // Calls the service to create the cart
   }
+
+    // Route to update a cart by ID
+    @Patch(':id')
+    async updateCart(
+      @Param('id') id: number,
+      @Body() updateData: {
+        buyer_id?: number;
+        seller_id?: number;
+        publication_id?: number;
+        quantity?: number;
+        total_price?: number;
+        transaction_date?: Date;
+        status?: string;
+        is_deleted?: boolean;
+      },
+    ): Promise<Cart> {
+      return this.cartService.updateCart(id, updateData); // Calls the service to update the cart
+    }
 
   // Route to delete a cart by ID
   @Delete(':id')

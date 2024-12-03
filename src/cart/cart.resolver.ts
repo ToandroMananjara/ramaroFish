@@ -37,6 +37,31 @@ export class CartResolver {
     };
     return this.cartService.createCart(cartData); // Calls the service to create the cart
   }
+    // Mutation to update a cart by ID
+    @Mutation(() => Cart) // Return the updated Cart object
+    async updateCart(
+      @Args('id') id: number,
+      @Args('buyer_id', { nullable: false }) buyer_id?: number,
+      @Args('seller_id', { nullable: false }) seller_id?: number,
+      @Args('publication_id', { nullable: false }) publication_id?: number,
+      @Args('quantity', { nullable: true }) quantity?: number,
+      @Args('total_price', { nullable: true }) total_price?: number,
+      @Args('transaction_date', { nullable: false }) transaction_date?: Date,
+      @Args('status', { nullable: true }) status?: string,
+      @Args('is_deleted', { nullable: true }) is_deleted?: boolean,
+    ): Promise<Cart> {
+      const updateData = {
+        buyer_id,
+        seller_id,
+        publication_id,
+        quantity,
+        total_price,
+        transaction_date,
+        status,
+        is_deleted,
+      };
+      return this.cartService.updateCart(id, updateData); // Calls the service to update the cart
+    }
 
   // Mutation to delete a cart by ID
   @Mutation(() => Cart) // Return the deleted Cart object

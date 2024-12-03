@@ -37,6 +37,24 @@ export class CartService {
     });
   }
 
+// Update a cart by ID
+async updateCart(id: number, data: {
+  buyer_id?: number;
+  seller_id?: number;
+  publication_id?: number;
+  quantity?: number;
+  total_price?: number;
+  transaction_date?: Date;
+  status?: string;
+  is_deleted?: boolean;
+}) {
+  return this.prisma.cart.update({
+    where: { id },
+    data,
+  });
+}
+
+
   // Delete a cart by ID
   async deleteCart(id: number) {
     return this.prisma.cart.delete({
