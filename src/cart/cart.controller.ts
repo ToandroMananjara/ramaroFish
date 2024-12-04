@@ -13,53 +13,49 @@ export class CartController {
   async getAllCarts(): Promise<Cart[]> {
     return this.cartService.getAll(); // Calls the service to get all carts
   }
+ 
+  @Get(":id")
+  async getCartById(@Param('id') id: string) {
+    return this.cartService.getOne(Number(id));
+  }
+
 
   // Route to create a new cart
   @Post()
-  async createCart(
-    @Body('buyer_id') buyer_id: number,
-    @Body('seller_id') seller_id: number,
-    @Body('publication_id') publication_id: number,
-    @Body('total_price') total_price: number,
-    @Body('transaction_date') transaction_date: Date,
-    @Body('quantity') quantity?: number,
-    @Body('status') status?: string,
-    @Body('is_deleted') is_deleted?: boolean,
-  ): Promise<Cart> {
-    const cartData = {
-      buyer_id,
-      seller_id,
-      publication_id,
-      total_price,
-      transaction_date,
-      quantity,
-      status,
-      is_deleted,
-    };
-    return this.cartService.createCart(cartData); // Calls the service to create the cart
+  async createCart(cartData: {
+    buyer_id: number;
+    seller_id: number;
+    publication_id: number;
+    quantity?: number;
+    total_price: number;
+    transaction_date: Date;
+    status?: string;
+    is_deleted?: boolean;
+  }) {
+    // Create the cart, without related fields.
+    return this.cartService.createCart(cartData);
   }
 
     // Route to update a cart by ID
     @Patch(':id')
-    async updateCart(
-      @Param('id') id: number,
-      @Body() updateData: {
-        buyer_id?: number;
-        seller_id?: number;
-        publication_id?: number;
-        quantity?: number;
-        total_price?: number;
-        transaction_date?: Date;
-        status?: string;
-        is_deleted?: boolean;
-      },
-    ): Promise<Cart> {
-      return this.cartService.updateCart(id, updateData); // Calls the service to update the cart
+    async updateCart(id: number, updateData: {
+      buyer_id?: number;
+      seller_id?: number;
+      publication_id?: number;
+      quantity?: number;
+      total_price?: number;
+      transaction_date?: Date;
+      status?: string;
+      is_deleted?: boolean;
+    }) {
+      // Update the cart, without related fields.
+      return this.cartService.updateCart(id, updateData);
     }
 
   // Route to delete a cart by ID
   @Delete(':id')
-  async deleteCart(@Param('id') id: number): Promise<Cart> {
-    return this.cartService.deleteCart(id); // Calls the service to delete the cart
+  async deleteCart(id: number) {
+    // Delete the cart, without needing related fields.
+    return this.cartService.deleteCart(id);
   }
 }

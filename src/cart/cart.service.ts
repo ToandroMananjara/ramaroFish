@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import Decimal from 'decimal.js';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -9,9 +9,25 @@ export class CartService {
 
   // Fetch all carts from the database
   async getAll() {
-    return this.prisma.cart.findMany(); 
+    const carts = await this.prisma.cart.findMany({
+      include: {
+        Users_Cart_buyer_idToUsers: true, // Include buyer data
+        Users_Cart_seller_idToUsers: true, // Include seller data
+        Publications: true, // Include publication data
+      },
+    });
+  return carts;
   }
-
+  async getOne(id: number) {
+    return this.prisma.cart.findUnique({
+      where: { id },
+      include: {
+        Users_Cart_buyer_idToUsers: true, // Include buyer data
+        Users_Cart_seller_idToUsers: true, // Include seller data
+        Publications: true, // Include publication data
+      },
+    })
+  }
   // Create a new cart
   async createCart(data: { 
     buyer_id: number;

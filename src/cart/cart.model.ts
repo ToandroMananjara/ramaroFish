@@ -1,7 +1,8 @@
 import { Field, ObjectType, Int, Float } from "@nestjs/graphql";
 import { Publications, Users } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";
-
+import { User } from "./user.model"
+import { Post } from "./post.model"
 // Convert Decimal to number before returning or assigni
 
 @ObjectType()
@@ -32,17 +33,18 @@ export class Cart {
 
   @Field(type => Boolean, { nullable: true })  // Explicitly define type for is_deleted (boolean type)
   is_deleted: boolean | null;
+  //   // Relations
+  @Field(type => User)
+  Users_Cart_buyer_idToUsers: Users;
+
+  @Field(type => Post)
+  Publications: Publications;
+
+  @Field(type => User)
+  Users_Cart_seller_idToUsers: Users; 
+
 }
 
 
 
-//   // Relations
-//   @Field(type => Users)
-//   Users_Cart_buyer_idToUsers: Users;
-
-//   @Field(type => Publications)
-//   Publications: Publications;
-
-//   @Field(type => Users)
-//   Users_Cart_seller_idToUsers: Users;
 

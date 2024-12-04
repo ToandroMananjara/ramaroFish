@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { CartService } from './cart.service'; // Ensure the correct path to your service
 import { Cart } from './cart.model'; // Assuming you have a Cart model to return
 import Decimal from 'decimal.js';
@@ -15,57 +15,41 @@ export class CartResolver {
 
   // Mutation to create a new cart
   @Mutation(() => Cart) // Return the created Cart object
-  async createCart(
-    @Args('buyer_id') buyer_id: number,
-    @Args('seller_id') seller_id: number,
-    @Args('publication_id') publication_id: number,
-    @Args('total_price') total_price: number,
-    @Args('transaction_date') transaction_date: Date,
-    @Args('quantity', { nullable: true }) quantity?: number,
-    @Args('status', { nullable: true }) status?: string,
-    @Args('is_deleted', { nullable: true }) is_deleted?: boolean,
-  ): Promise<Cart> {
-    const cartData = {
-      buyer_id,
-      seller_id,
-      publication_id,
-      total_price,
-      transaction_date,
-      quantity,
-      status,
-      is_deleted,
-    };
-    return this.cartService.createCart(cartData); // Calls the service to create the cart
+  async createCart(cartData: {
+    buyer_id: number;
+    seller_id: number;
+    publication_id: number;
+    quantity?: number;
+    total_price: number;
+    transaction_date: Date;
+    status?: string;
+    is_deleted?: boolean;
+  }) {
+    return this.cartService.createCart(cartData); // No related fields needed here
   }
     // Mutation to update a cart by ID
     @Mutation(() => Cart) // Return the updated Cart object
-    async updateCart(
-      @Args('id') id: number,
-      @Args('buyer_id', { nullable: false }) buyer_id?: number,
-      @Args('seller_id', { nullable: false }) seller_id?: number,
-      @Args('publication_id', { nullable: false }) publication_id?: number,
-      @Args('quantity', { nullable: true }) quantity?: number,
-      @Args('total_price', { nullable: true }) total_price?: number,
-      @Args('transaction_date', { nullable: false }) transaction_date?: Date,
-      @Args('status', { nullable: true }) status?: string,
-      @Args('is_deleted', { nullable: true }) is_deleted?: boolean,
-    ): Promise<Cart> {
-      const updateData = {
-        buyer_id,
-        seller_id,
-        publication_id,
-        quantity,
-        total_price,
-        transaction_date,
-        status,
-        is_deleted,
-      };
-      return this.cartService.updateCart(id, updateData); // Calls the service to update the cart
+    async updateCart(id: number, updateData: {
+      buyer_id?: number;
+      seller_id?: number;
+      publication_id?: number;
+      quantity?: number;
+      total_price?: number;
+      transaction_date?: Date;
+      status?: string;
+      is_deleted?: boolean;
+    }) {
+      return this.cartService.updateCart(id, updateData); // No related fields needed here
     }
 
   // Mutation to delete a cart by ID
   @Mutation(() => Cart) // Return the deleted Cart object
-  async deleteCart(@Args('id') id: number): Promise<Cart> {
-    return this.cartService.deleteCart(id); // Calls the service to delete the cart
+  async deleteCart(id: number) {
+    return this.cartService.deleteCart(id); // No related fields needed here
+  }
+
+  @Query(returns => Cart, { name: 'cart', nullable: true }) // Allow null
+  async getCartById(@Args('id', { type: () => Int }) id: number): Promise<Cart | null> {
+    return this.cartService.getOne(id); 
   }
 }
