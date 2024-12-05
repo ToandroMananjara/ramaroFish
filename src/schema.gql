@@ -1,0 +1,47 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: Int!
+  username: String!
+  email: String!
+  profile_picture: String
+  created_at: DateTime
+  is_deleted: Boolean!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Message {
+  id: Int!
+  sender_id: Int!
+  receiver_id: Int!
+  content: String!
+  is_read: Boolean!
+  created_at: DateTime
+  conversation_id: Int!
+  Users_Messages_sender_idToUsers: User
+  Users_Messages_receiver_idToUsers: User
+}
+
+type Query {
+  messages: [Message!]!
+  messagesByConversation(conversationId: Int!): [Message!]!
+  users: [User!]!
+  user(id: Int!): User
+}
+
+type Mutation {
+  createMessage(input: CreateMessageInput!): Message!
+}
+
+input CreateMessageInput {
+  senderId: Int!
+  receiverId: Int!
+  content: String!
+  conversationId: Int
+}
