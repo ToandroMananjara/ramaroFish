@@ -1,188 +1,99 @@
-# 📘 Backend Development Guide with NestJS, GraphQL, PostgreSQL, Apollo, and Prisma
+<p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+</p>
 
-Bienvenue dans notre projet backend ! Ce guide décrit les technologies que chaque membre doit maîtriser pour travailler efficacement.
+[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
+[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-## 🎯 **Objectif**
+  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+    <p align="center">
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
+<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
+<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
+<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
+<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
+<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
+  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
+    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
+  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
+</p>
+  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
+  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-Comprendre et utiliser les technologies choisies pour construire une API backend robuste, modulaire et performante.
+## Description
 
----
+[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## 🛠️ **Technologies à étudier**
+## Project setup
 
-### **1. NestJS**
-
-Un framework backend TypeScript inspiré d'Angular, conçu pour la modularité et la maintenabilité.
-
-- **Pourquoi NestJS ?**
-
-  - Structure modulaire.
-  - Support natif de TypeScript.
-  - Intégration facile avec GraphQL et PostgreSQL.
-
-- **À apprendre :**
-
-  - Concepts de base : Modules, contrôleurs, services, middleware.
-  - Décorateurs (@Module, @Controller, @Injectable, etc.).
-  - Gestion des dépendances via `Dependency Injection`.
-  - Intégration avec GraphQL.
-
-- **Ressources recommandées :**
-  - [Documentation officielle de NestJS](https://docs.nestjs.com)
-  - Tutoriels YouTube : _NestJS Crash Courses_.
-
----
-
-### **2. GraphQL**
-
-Un langage de requête pour les APIs permettant de récupérer uniquement les données nécessaires.
-
-- **Pourquoi GraphQL ?**
-
-  - Alternative moderne à REST.
-  - Requêtes flexibles et performantes.
-  - Typage statique et introspection intégrée.
-
-- **À apprendre :**
-
-  - Concepts de base : Schémas, types (Query, Mutation, Subscription).
-  - Différences entre REST et GraphQL.
-  - Écriture de requêtes et mutations dans GraphQL.
-  - Utilisation d’Apollo Server avec NestJS.
-
-- **Ressources recommandées :**
-  - [Documentation officielle de GraphQL](https://graphql.org/learn/)
-  - [Apollo GraphQL](https://www.apollographql.com/docs)
-
----
-
-### **3. PostgreSQL**
-
-Une base de données relationnelle puissante, idéale pour les applications complexes.
-
-- **Pourquoi PostgreSQL ?**
-
-  - Performances élevées et fiabilité.
-  - Supporte les relations avancées entre les données.
-  - Compatible avec Prisma pour une gestion simplifiée.
-
-- **À apprendre :**
-
-  - Concepts SQL : Tables, relations, requêtes (SELECT, INSERT, UPDATE, DELETE).
-  - Création et gestion des bases de données.
-  - Écriture de requêtes SQL avancées (jointures, transactions).
-  - Intégration avec Prisma.
-
-- **Ressources recommandées :**
-  - [Documentation PostgreSQL](https://www.postgresql.org/docs/)
-  - Tutoriels YouTube : _PostgreSQL for Beginners_.
-
----
-
-### **4. Apollo**
-
-Une implémentation populaire de GraphQL utilisée pour créer un serveur GraphQL.
-
-- **Pourquoi Apollo ?**
-
-  - Facile à intégrer avec NestJS.
-  - Support pour les requêtes en temps réel (subscriptions).
-  - Richesse des outils comme Apollo Studio pour analyser les APIs.
-
-- **À apprendre :**
-
-  - Configurer Apollo Server avec NestJS.
-  - Écrire des resolvers et gérer les requêtes/mutations.
-  - Configurer les abonnements (subscriptions) pour le temps réel.
-
-- **Ressources recommandées :**
-  - [Apollo Server Documentation](https://www.apollographql.com/docs/apollo-server/)
-
----
-
-### **5. Prisma**
-
-Un ORM moderne pour simplifier la gestion des bases de données.
-
-- **Pourquoi Prisma ?**
-
-  - Génère automatiquement un client TypeScript pour interagir avec la base.
-  - Support des migrations et des relations complexes.
-  - Très facile à utiliser avec PostgreSQL.
-
-- **À apprendre :**
-
-  - Configurer Prisma avec PostgreSQL.
-  - Écrire des modèles dans `schema.prisma`.
-  - Générer des migrations.
-  - Utiliser le client Prisma pour les opérations CRUD.
-
-- **Ressources recommandées :**
-  - [Documentation Prisma](https://www.prisma.io/docs)
-  - Tutoriels officiels sur le site Prisma.
-
----
-
-## 🚀 **Plan d'étude recommandé**
-
-1. **Semaines 1-2 :**
-
-   - Apprendre les bases de NestJS.
-   - Se familiariser avec les schémas GraphQL.
-
-2. **Semaines 3-4 :**
-
-   - Comprendre PostgreSQL et écrire des requêtes SQL simples.
-   - Configurer Prisma et écrire des modèles.
-
-3. **Semaines 5-6 :**
-   - Approfondir Apollo Server et intégrer GraphQL avec NestJS.
-   - Pratiquer les relations et les migrations avec Prisma.
-
----
-
-## 📂 **Structure du projet**
-
-Voici une structure typique que nous allons suivre :
-
-```
-src/
-├── app.module.ts
-├── users/
-│   ├── users.module.ts
-│   ├── users.service.ts
-│   ├── users.resolver.ts
-│   ├── entities/
-│   │   └── user.entity.ts
-│   └── dto/
-│       ├── create-user.input.ts
-│       └── update-user.input.ts
-├── prisma/
-│   └── prisma.service.ts
+```bash
+$ npm install
 ```
 
----
+## Compile and run the project
 
-## ✅ **Prochaines étapes**
+```bash
+# development
+$ npm run start
 
-1. Installe les outils nécessaires :
+# watch mode
+$ npm run start:dev
 
-   - Node.js et npm.
-   - PostgreSQL.
-   - Prisma CLI.
+# production mode
+$ npm run start:prod
+```
 
-2. Clone le projet et lance l'installation :
+## Run tests
 
-   ```bash
-   git clone <url-du-projet>
-   cd <nom-du-dossier>
-   npm install
-   ```
+```bash
+# unit tests
+$ npm run test
 
-3. Configure l'environnement (`.env`) :
+# e2e tests
+$ npm run test:e2e
 
-   ```env
-   DATABASE_URL="postgresql://<user>:<password>@localhost:5432/<database>"
-   ```
+# test coverage
+$ npm run test:cov
+```
 
-4. Suis le plan d'étude pour monter en compétence sur chaque technologie.
+## Deployment
+
+When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+
+If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+
+```bash
+$ npm install -g mau
+$ mau deploy
+```
+
+With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+
+## Resources
+
+Check out a few resources that may come in handy when working with NestJS:
+
+- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
+- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
+- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
+- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
+- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
+- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
+- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
+- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+
+## Support
+
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+
+## Stay in touch
+
+- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
+- Website - [https://nestjs.com](https://nestjs.com/)
+- Twitter - [@nestframework](https://twitter.com/nestframework)
+
+## License
+
+Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).

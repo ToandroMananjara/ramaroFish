@@ -1,0 +1,224 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Categories {
+  id                 Int            @id(map: "categories_pkey") @default(autoincrement())
+  name               String         @unique(map: "categories_name_key") @db.VarChar
+  description        String?
+  parent_category_id Int?
+  Categories         Categories?    @relation("CategoriesToCategories", fields: [parent_category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "categories_parent_category_id_fkey")
+  other_Categories   Categories[]   @relation("CategoriesToCategories")
+  Publications       Publications[]
+}
+
+model Companies {
+  id              Int               @id(map: "companies_pkey") @default(autoincrement())
+  company_name    String            @unique(map: "companies_company_name_key") @db.VarChar
+  NIF             String            @unique(map: "companies_NIF_key") @db.VarChar
+  STAT            String            @unique(map: "companies_STAT_key") @db.VarChar
+  localisation    String?           @db.VarChar
+  created_at      DateTime?         @db.Timestamp(6)
+  is_deleted      Boolean?          @default(false)
+  Company_members Company_members[]
+  Publications    Publications[]
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model Company_members {
+  user_id    Int
+  company_id Int
+  role       String?   @default("member") @db.VarChar
+  joined_at  DateTime? @db.Timestamp(6)
+  is_deleted Boolean?  @default(false)
+  Companies  Companies @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "company_members_company_id_fkey")
+  Users      Users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "company_members_user_id_fkey")
+
+  @@id([user_id, company_id])
+}
+
+model Conversations {
+  id                                  Int        @id(map: "conversations_pkey") @default(autoincrement())
+  user1_id                            Int
+  user2_id                            Int
+  last_message_at                     DateTime?  @db.Timestamp(6)
+  is_deleted                          Boolean?   @default(false)
+  Users_Conversations_user1_idToUsers Users      @relation("Conversations_user1_idToUsers", fields: [user1_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "conversations_user1_id_fkey")
+  Users_Conversations_user2_idToUsers Users      @relation("Conversations_user2_idToUsers", fields: [user2_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "conversations_user2_id_fkey")
+  Messages                            Messages[]
+}
+
+model Followers {
+  id                                  Int       @id(map: "followers_pkey") @default(autoincrement())
+  follower_id                         Int
+  following_id                        Int
+  created_at                          DateTime? @db.Timestamp(6)
+  is_deleted                          Boolean?  @default(false)
+  Users_Followers_follower_idToUsers  Users     @relation("Followers_follower_idToUsers", fields: [follower_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "followers_follower_id_fkey")
+  Users_Followers_following_idToUsers Users     @relation("Followers_following_idToUsers", fields: [following_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "followers_following_id_fkey")
+}
+
+model Messages {
+  id                                Int           @id(map: "messages_pkey") @default(autoincrement())
+  sender_id                         Int
+  receiver_id                       Int
+  content                           String
+  is_read                           Boolean?      @default(false)
+  created_at                        DateTime?     @db.Timestamp(6)
+  is_deleted                        Boolean?      @default(false)
+  conversation_id                   Int
+  Conversations                     Conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_conversation")
+  Users_Messages_receiver_idToUsers Users         @relation("Messages_receiver_idToUsers", fields: [receiver_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "messages_receiver_id_fkey")
+  Users_Messages_sender_idToUsers   Users         @relation("Messages_sender_idToUsers", fields: [sender_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "messages_sender_id_fkey")
+}
+
+model Notifications {
+  id           Int       @id @default(autoincrement())
+  user_id      Int
+  type         String    @db.VarChar
+  title        String?   @db.VarChar
+  content      String?   @db.Text
+  reference_id Int?
+  sub_type     String?   @db.VarChar
+  priority     String?   @default("normal") @db.VarChar
+  action_url   String?   @db.VarChar
+  is_read      Boolean?  @default(false)
+  created_at   DateTime? @db.Timestamp(6)
+  expires_at   DateTime? @db.Timestamp(6)
+  is_deleted   Boolean?  @default(false)
+  Users        Users     @relation(fields: [user_id], references: [id])
+}
+
+model Publication_comments {
+  id             Int          @id(map: "publication_comments_pkey") @default(autoincrement())
+  publication_id Int
+  user_id        Int
+  comment_text   String
+  created_at     DateTime?    @db.Timestamp(6)
+  is_deleted     Boolean?     @default(false)
+  Publications   Publications @relation(fields: [publication_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "publication_comments_publication_id_fkey")
+  Users          Users        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "publication_comments_user_id_fkey")
+}
+
+model Publications {
+  id                   Int                    @id(map: "publications_pkey") @default(autoincrement())
+  owner_user_id        Int?
+  owner_company_id     Int?
+  publication_type     String                 @db.VarChar
+  publication_title    String                 @db.VarChar
+  content              String
+  media                String?                @db.VarChar
+  category_id          Int?
+  price                Decimal?               @db.Decimal(10, 2)
+  initial_stock        Decimal?               @db.Decimal(10, 2)
+  current_stock        Decimal?               @db.Decimal(10, 2)
+  max_weight           Decimal?               @db.Decimal(10, 2)
+  min_weight           Decimal?               @db.Decimal(10, 2)
+  devise_type          String?                @default("mga") @db.VarChar
+  livraison            Boolean?               @default(false)
+  location             String                 @db.VarChar
+  status               String?                @default("active") @db.VarChar
+  created_at           DateTime?              @db.Timestamp(6)
+  updated_at           DateTime?              @db.Timestamp(6)
+  is_deleted           Boolean?               @default(false)
+  Cart                 Cart[]
+  Publication_comments Publication_comments[]
+  Categories           Categories?            @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "publications_category_id_fkey")
+  Companies            Companies?             @relation(fields: [owner_company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "publications_owner_company_id_fkey")
+  Users                Users?                 @relation(fields: [owner_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "publications_owner_user_id_fkey")
+  Reactions            Reactions[]
+  Transactions         Transactions[]
+}
+
+model Reactions {
+  id             Int          @id(map: "reactions_pkey") @default(autoincrement())
+  publication_id Int
+  user_id        Int
+  reaction_type  String       @default("like") @db.VarChar
+  created_at     DateTime?    @db.Timestamp(6)
+  is_deleted     Boolean?     @default(false)
+  Publications   Publications @relation(fields: [publication_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reactions_publication_id_fkey")
+  Users          Users        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reactions_user_id_fkey")
+}
+
+model Reviews {
+  id                               Int          @id(map: "reviews_pkey") @default(autoincrement())
+  transaction_id                   Int
+  reviewer_id                      Int
+  reviewee_id                      Int
+  rating                           Int
+  comment                          String?
+  created_at                       DateTime?    @db.Timestamp(6)
+  is_deleted                       Boolean?     @default(false)
+  Users_Reviews_reviewee_idToUsers Users        @relation("Reviews_reviewee_idToUsers", fields: [reviewee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_reviewee_id_fkey")
+  Users_Reviews_reviewer_idToUsers Users        @relation("Reviews_reviewer_idToUsers", fields: [reviewer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_reviewer_id_fkey")
+  Transactions                     Transactions @relation(fields: [transaction_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_transaction_id_fkey")
+}
+
+model Transactions {
+  id                                  Int          @id(map: "transactions_pkey") @default(autoincrement())
+  buyer_id                            Int
+  seller_id                           Int
+  publication_id                      Int
+  quantity                            Int?         @default(1)
+  total_price                         Decimal      @db.Decimal(10, 2)
+  transaction_date                    DateTime     @db.Timestamp(6)
+  status                              String?      @default("pending") @db.VarChar
+  is_deleted                          Boolean?     @default(false)
+  Reviews                             Reviews[]
+  Users_Transactions_buyer_idToUsers  Users        @relation("Transactions_buyer_idToUsers", fields: [buyer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_buyer_id_fkey")
+  Publications                        Publications @relation(fields: [publication_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_publication_id_fkey")
+  Users_Transactions_seller_idToUsers Users        @relation("Transactions_seller_idToUsers", fields: [seller_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_seller_id_fkey")
+}
+
+model Users {
+  id                                          Int                    @id(map: "users_pkey") @default(autoincrement())
+  username                                    String                 @unique(map: "users_username_key") @db.VarChar
+  email                                       String                 @unique(map: "users_email_key") @db.VarChar
+  password                                    String                 @db.VarChar
+  created_at                                  DateTime?              @db.Timestamp(6)
+  country                                     String?                @db.VarChar
+  city                                        String?                @db.VarChar
+  company                                     Boolean?               @default(false)
+  language                                    String?                @db.VarChar
+  profile_picture                             String?                @db.VarChar
+  is_deleted                                  Boolean?               @default(false)
+  is_premium_user                             Boolean?               @default(false)
+  Cart_Cart_buyer_idToUsers                   Cart[]                 @relation("Cart_buyer_idToUsers")
+  Cart_Cart_seller_idToUsers                  Cart[]                 @relation("Cart_seller_idToUsers")
+  Company_members                             Company_members[]
+  Conversations_Conversations_user1_idToUsers Conversations[]        @relation("Conversations_user1_idToUsers")
+  Conversations_Conversations_user2_idToUsers Conversations[]        @relation("Conversations_user2_idToUsers")
+  Followers_Followers_follower_idToUsers      Followers[]            @relation("Followers_follower_idToUsers")
+  Followers_Followers_following_idToUsers     Followers[]            @relation("Followers_following_idToUsers")
+  Messages_Messages_receiver_idToUsers        Messages[]             @relation("Messages_receiver_idToUsers")
+  Messages_Messages_sender_idToUsers          Messages[]             @relation("Messages_sender_idToUsers")
+  Notifications                               Notifications[]
+  Publication_comments                        Publication_comments[]
+  Publications                                Publications[]
+  Reactions                                   Reactions[]
+  Reviews_Reviews_reviewee_idToUsers          Reviews[]              @relation("Reviews_reviewee_idToUsers")
+  Reviews_Reviews_reviewer_idToUsers          Reviews[]              @relation("Reviews_reviewer_idToUsers")
+  Transactions_Transactions_buyer_idToUsers   Transactions[]         @relation("Transactions_buyer_idToUsers")
+  Transactions_Transactions_seller_idToUsers  Transactions[]         @relation("Transactions_seller_idToUsers")
+}
+
+model Cart {
+  id                          Int          @id @default(autoincrement())
+  buyer_id                    Int
+  seller_id                   Int
+  publication_id              Int
+  quantity                    Int?         @default(1)
+  total_price                 Decimal      @db.Decimal(10, 2)
+  transaction_date            DateTime     @db.Timestamp(6)
+  status                      String?      @default("pending") @db.VarChar
+  is_deleted                  Boolean?     @default(false)
+  Users_Cart_buyer_idToUsers  Users        @relation("Cart_buyer_idToUsers", fields: [buyer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Publications                Publications @relation(fields: [publication_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Users_Cart_seller_idToUsers Users        @relation("Cart_seller_idToUsers", fields: [seller_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
