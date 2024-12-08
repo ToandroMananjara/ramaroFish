@@ -28,15 +28,35 @@ type Message {
   Users_Messages_receiver_idToUsers: User
 }
 
+type Notification {
+  id: Int!
+  user_id: Int!
+  type: String!
+  title: String
+  content: String
+  reference_id: Int
+  sub_type: String
+  priority: String
+  action_url: String
+  is_read: Boolean!
+  created_at: DateTime
+  expires_at: DateTime
+  Users: User
+}
+
 type Query {
   messages: [Message!]!
   messagesByConversation(conversationId: Int!): [Message!]!
+  notifications(userId: Int!): [Notification!]!
   users: [User!]!
   user(id: Int!): User
 }
 
 type Mutation {
   createMessage(input: CreateMessageInput!): Message!
+  createNotification(input: CreateNotificationInput!): Notification!
+  markNotificationAsRead(id: Int!): Notification!
+  deleteNotification(id: Int!): Notification!
 }
 
 input CreateMessageInput {
@@ -44,4 +64,15 @@ input CreateMessageInput {
   receiverId: Int!
   content: String!
   conversationId: Int
+}
+
+input CreateNotificationInput {
+  user_id: Int!
+  type: String!
+  title: String
+  content: String
+  reference_id: Int
+  sub_type: String
+  priority: String
+  action_url: String
 }
