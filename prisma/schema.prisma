@@ -78,15 +78,20 @@ model Messages {
 }
 
 model Notifications {
-  id           Int       @id(map: "notifications_pkey") @default(autoincrement())
+  id           Int       @id @default(autoincrement())
   user_id      Int
   type         String    @db.VarChar
+  title        String?   @db.VarChar
+  content      String?   @db.Text
   reference_id Int?
+  sub_type     String?   @db.VarChar
+  priority     String?   @default("normal") @db.VarChar
+  action_url   String?   @db.VarChar
   is_read      Boolean?  @default(false)
   created_at   DateTime? @db.Timestamp(6)
+  expires_at   DateTime? @db.Timestamp(6)
   is_deleted   Boolean?  @default(false)
-  sub_type     String?   @db.VarChar
-  Users        Users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "notifications_user_id_fkey")
+  Users        Users     @relation(fields: [user_id], references: [id])
 }
 
 model Publication_comments {

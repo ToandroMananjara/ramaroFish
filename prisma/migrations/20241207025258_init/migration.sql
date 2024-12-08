@@ -73,13 +73,18 @@ CREATE TABLE "Notifications" (
     "id" SERIAL NOT NULL,
     "user_id" INTEGER NOT NULL,
     "type" VARCHAR NOT NULL,
+    "title" VARCHAR,
+    "content" TEXT,
     "reference_id" INTEGER,
+    "sub_type" VARCHAR,
+    "priority" VARCHAR DEFAULT 'normal',
+    "action_url" VARCHAR,
     "is_read" BOOLEAN DEFAULT false,
     "created_at" TIMESTAMP(6),
+    "expires_at" TIMESTAMP(6),
     "is_deleted" BOOLEAN DEFAULT false,
-    "sub_type" VARCHAR,
 
-    CONSTRAINT "notifications_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Notifications_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -243,7 +248,7 @@ ALTER TABLE "Messages" ADD CONSTRAINT "messages_receiver_id_fkey" FOREIGN KEY ("
 ALTER TABLE "Messages" ADD CONSTRAINT "messages_sender_id_fkey" FOREIGN KEY ("sender_id") REFERENCES "Users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "Notifications" ADD CONSTRAINT "notifications_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "Users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "Notifications" ADD CONSTRAINT "Notifications_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Publication_comments" ADD CONSTRAINT "publication_comments_publication_id_fkey" FOREIGN KEY ("publication_id") REFERENCES "Publications"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
